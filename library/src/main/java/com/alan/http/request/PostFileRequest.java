@@ -21,7 +21,7 @@ import okio.Source;
  * 时 间：2019-12-13
  * 简 述：<功能简述>
  */
-public class PostFileRequest extends BaseRequest {
+public class PostFileRequest extends XmRequest {
 
 
     public PostFileRequest(String path) {

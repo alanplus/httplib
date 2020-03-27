@@ -3,9 +3,7 @@ package com.alan.http.request;
 import android.text.TextUtils;
 
 import com.alan.http.ApiResult;
-import com.alan.http.XmHttpConfig;
-
-import java.io.File;
+import com.alan.http.HttpConfig;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -25,30 +23,38 @@ import okhttp3.Response;
  * 时 间：2019-12-13
  * 简 述：<功能简述>
  */
-public abstract class BaseRequest {
+public abstract class XmRequest {
 
-    OkHttpClient okHttpClient = XmHttpConfig.getInstance().getHttpClient();
-    private static final String CHARSET_NAME = "UTF-8";
+    protected OkHttpClient okHttpClient;
+    protected static final String CHARSET_NAME = "UTF-8";
 
-    private boolean isEncoding;
-    MediaType mediaType;
+    protected boolean isEncoding;
+    protected boolean isPrintLog;
+    protected MediaType mediaType;
 
-    private String url;
-    private String tag;
+    protected String url;
+    protected String tag;
 
-    HashMap<String, String> mParams;
-    private HashMap<String, String> mHeaders;
+    protected HashMap<String, String> mParams;
+    protected HashMap<String, String> mHeaders;
 
 
-    BaseRequest(String path) {
-        url = path.startsWith("http://") || path.startsWith("https://") ? path : XmHttpConfig.getInstance().getHost() + path;
-        tag = url;
+    XmRequest(String path) {
+        this.okHttpClient = HttpConfig.getOkHttpClient();
+        this.url = path.startsWith("http://") || path.startsWith("https://") ? path : HttpConfig.getHost() + path;
+        this.tag = url;
+        this.isEncoding = HttpConfig.isEncoding();
+        this.isPrintLog = HttpConfig.isPrintLog();
+        this.mediaType = HttpConfig.getMediaType();
+        this.mParams = HttpConfig.getCommonParams();
+        this.mHeaders = HttpConfig.getHeadParams();
     }
 
-    protected abstract Request create(String url, Request.Builder builder, String body);
+
+    abstract Request create(String url, Request.Builder builder, String body);
 
 
-    public String getContentFromMap(Map<String, String> params) throws UnsupportedEncodingException {
+    private String getContentFromMap(Map<String, String> params) throws UnsupportedEncodingException {
         if (null == params) {
             return "";
         }
@@ -66,7 +72,7 @@ public abstract class BaseRequest {
         return sb.toString();
     }
 
-    Request create() throws IOException {
+    private Request create() throws IOException {
         Request.Builder builder = new Request.Builder().tag(tag);
         addHeaders(builder);
         return create(url, builder, getContentFromMap(mParams));
@@ -85,28 +91,34 @@ public abstract class BaseRequest {
     }
 
 
-    public void setEncoding(boolean encoding) {
+    public XmRequest setEncoding(boolean encoding) {
         isEncoding = encoding;
+        return this;
     }
 
-    public void setMediaType(MediaType mediaType) {
+    public XmRequest setMediaType(MediaType mediaType) {
         this.mediaType = mediaType;
+        return this;
     }
 
-    public void setUrl(String url) {
+    public XmRequest setUrl(String url) {
         this.url = url;
+        return this;
     }
 
-    public void setTag(String tag) {
+    public XmRequest setTag(String tag) {
         this.tag = tag;
+        return this;
     }
 
-    public void setParams(HashMap<String, String> mParams) {
+    public XmRequest setParams(HashMap<String, String> mParams) {
         this.mParams = mParams;
+        return this;
     }
 
-    public void setHeaders(HashMap<String, String> mHeaders) {
+    public XmRequest setHeaders(HashMap<String, String> mHeaders) {
         this.mHeaders = mHeaders;
+        return this;
     }
 
     public String getUrl() {
@@ -121,9 +133,8 @@ public abstract class BaseRequest {
         Request request = create();
         Response response = okHttpClient.newCall(request).execute();
         if (response.isSuccessful()) {
-            return response.body().string();
+            return response.body() == null ? "" : response.body().string();
         }
-
         return "";
     }
 

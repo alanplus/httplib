@@ -106,7 +106,7 @@ public class LogUtil {
     }
 
     public static boolean isDebug() {
-        return XmHttpConfig.getInstance().isLogEnable();
+        return null!=HttpConfig.iHttpConfig&&HttpConfig.iHttpConfig.isPrintLog();
 //        return ResourceTools.getResourceBool(R.bool.is_debug);
     }
 

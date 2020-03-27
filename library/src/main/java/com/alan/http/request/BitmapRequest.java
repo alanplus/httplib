@@ -9,7 +9,7 @@ import okhttp3.Request;
  * 时 间：2019-12-17
  * 简 述：<功能简述>
  */
-public class BitmapRequest extends BaseRequest{
+public class BitmapRequest extends XmRequest{
 
 
     public BitmapRequest(String path) {

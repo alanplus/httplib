@@ -1,14 +1,10 @@
 package com.alan.http;
 
-import android.graphics.Bitmap;
 
-import com.alan.http.build.XmFileHttpBuilder;
-import com.alan.http.build.XmHttpBuilder;
-import com.alan.http.build.XmHttpStreamBuilder;
 import com.alan.http.request.BitmapRequest;
-import com.alan.http.request.FileRequest;
 import com.alan.http.request.GetRequest;
 import com.alan.http.request.PostRequest;
+import com.alan.http.request.XmRequest;
 
 
 /**
@@ -19,17 +15,16 @@ import com.alan.http.request.PostRequest;
 public class XmHttpExecutor {
 
 
-    public static  XmHttpBuilder get(String path) {
-        return new XmHttpBuilder(new GetRequest(path));
+    public static XmRequest get(String path) {
+        return new GetRequest(path);
     }
 
-
-    public static  XmHttpBuilder post(String path) {
-        return new XmHttpBuilder(new PostRequest(path));
+    public static  XmRequest post(String path) {
+        return new PostRequest(path);
     }
 
-    public static XmHttpBuilder bitmap(String path) {
-        return new XmHttpStreamBuilder(new BitmapRequest(path));
+    public static XmRequest bitmap(String path) {
+        return new BitmapRequest(path);
     }
 
 //    public static XmFileHttpBuilder file(String path) {

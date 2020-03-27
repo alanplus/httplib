@@ -10,7 +10,7 @@ import okhttp3.Request;
  * 时 间：2019-12-13
  * 简 述：<功能简述>
  */
-public class GetRequest extends BaseRequest {
+public class GetRequest extends XmRequest {
 
 
     public GetRequest(String path) {

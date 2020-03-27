@@ -1,5 +1,7 @@
 package com.alan.http;
 
+import android.os.Handler;
+
 import java.util.HashMap;
 
 import okhttp3.MediaType;
@@ -22,8 +24,12 @@ public interface IHttpConfig {
 
     IParseStrategy getParseStrategy();
 
-    OkHttpClient getOkHttpClinet();
+    OkHttpClient getOkHttpClient();
 
     MediaType getMediaType();
+
+    String host();
+
+    Handler handler();
 
 }
