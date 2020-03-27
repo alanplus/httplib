@@ -126,6 +126,26 @@ public abstract class XmRequest {
     }
 
 
+    public XmRequest addParams(HashMap<String, String> mParams){
+        this.mParams.putAll(mParams);
+        return this;
+    }
+
+    public XmRequest addParam(String key,String value){
+        this.mParams.put(key,value);
+        return this;
+    }
+
+    public XmRequest addHeads(HashMap<String, String> mHeaders){
+        this.mHeaders.putAll(mHeaders);
+        return this;
+    }
+
+    public XmRequest addHead(String key,String value){
+        this.mHeaders.put(key,value);
+        return this;
+    }
+
     /**
      * 执行请求
      */
