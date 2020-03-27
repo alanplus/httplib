@@ -2,6 +2,7 @@ package com.alan.http.build;
 
 import android.text.TextUtils;
 
+import com.alan.http.ApiResult;
 import com.alan.http.HttpConfig;
 import com.alan.http.IHttpConfig;
 import com.alan.http.IParseStrategy;
@@ -21,7 +22,7 @@ import okhttp3.Response;
  * 时 间：2019-12-13
  * 简 述：<功能简述>
  */
-public class XmHttpBuilder<T> {
+public class XmHttpBuilder {
 
     BaseRequest baseRequest;
 
@@ -31,13 +32,13 @@ public class XmHttpBuilder<T> {
     boolean isEncoding;
     boolean isLog;
 
-    IParseStrategy<T> iParseStrategy;
+    IParseStrategy iParseStrategy;
 
     String tag;
     MediaType mediaType;
 
 
-    BaseRequest.OnHttpCallBack<T> onHttpCallBack;
+    BaseRequest.OnHttpCallBack onHttpCallBack;
 
 
     public XmHttpBuilder(BaseRequest baseRequest) {
@@ -46,7 +47,7 @@ public class XmHttpBuilder<T> {
         this.tag = baseRequest.getUrl();
     }
 
-    public XmHttpBuilder<T> setHttpConfig(IHttpConfig iHttpConfig) {
+    public XmHttpBuilder setHttpConfig(IHttpConfig iHttpConfig) {
         mParams = new HashMap<>();
         mHeaders = new HashMap<>();
         if (null != iHttpConfig) {
@@ -60,65 +61,65 @@ public class XmHttpBuilder<T> {
     }
 
 
-    public XmHttpBuilder<T> addParam(String key, String value) {
+    public XmHttpBuilder addParam(String key, String value) {
         if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)) {
             mParams.put(key, value);
         }
         return this;
     }
 
-    public XmHttpBuilder<T> addParams(HashMap<String, String> hashMap) {
+    public XmHttpBuilder addParams(HashMap<String, String> hashMap) {
         if (null != hashMap) {
             mParams.putAll(hashMap);
         }
         return this;
     }
 
-    public XmHttpBuilder<T> addHeader(String key, String value) {
+    public XmHttpBuilder addHeader(String key, String value) {
         if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)) {
             mHeaders.put(key, value);
         }
         return this;
     }
 
-    public XmHttpBuilder<T> addAllHeaders(HashMap<String, String> hashMap) {
+    public XmHttpBuilder addAllHeaders(HashMap<String, String> hashMap) {
         if (null != hashMap) {
             mHeaders.putAll(hashMap);
         }
         return this;
     }
 
-    public XmHttpBuilder<T> setMediaType(MediaType mediaType) {
+    public XmHttpBuilder setMediaType(MediaType mediaType) {
         this.mediaType = mediaType;
         return this;
     }
 
-    public XmHttpBuilder<T> setParseStrategy(IParseStrategy<T> iParseStrategy) {
+    public XmHttpBuilder setParseStrategy(IParseStrategy iParseStrategy) {
         this.iParseStrategy = iParseStrategy;
         return this;
     }
 
-    public XmHttpBuilder<T> setEncoding(boolean encoding) {
+    public XmHttpBuilder setEncoding(boolean encoding) {
         isEncoding = encoding;
         return this;
     }
 
-    public XmHttpBuilder<T> setParams(HashMap<String, String> mParams) {
+    public XmHttpBuilder setParams(HashMap<String, String> mParams) {
         this.mParams = mParams;
         return this;
     }
 
-    public XmHttpBuilder<T> setHeaders(HashMap<String, String> mHeaders) {
+    public XmHttpBuilder setHeaders(HashMap<String, String> mHeaders) {
         this.mHeaders = mHeaders;
         return this;
     }
 
-    public XmHttpBuilder<T> setTag(String tag) {
+    public XmHttpBuilder setTag(String tag) {
         this.tag = tag;
         return this;
     }
 
-    public XmHttpBuilder<T> setOnHttpCallBack(BaseRequest.OnHttpCallBack<T> onHttpCallBack) {
+    public XmHttpBuilder setOnHttpCallBack(BaseRequest.OnHttpCallBack onHttpCallBack) {
         this.onHttpCallBack = onHttpCallBack;
         return this;
     }
@@ -131,9 +132,7 @@ public class XmHttpBuilder<T> {
         baseRequest.setTag(tag);
     }
 
-    public T build() {
-
-
+    public ApiResult build() {
         try {
             complete();
             String content = baseRequest.execute();
@@ -172,11 +171,11 @@ public class XmHttpBuilder<T> {
     };
 
     private void handlerSuccess(final Call call, final String string) {
-        T t = null;
+        ApiResult t = null;
         if (null != iParseStrategy) {
             t = iParseStrategy.parse(string);
         }
-        final T finalT = t;
+        final ApiResult finalT = t;
         XmHttpConfig.getInstance().getHandler().post(new Runnable() {
             @Override
             public void run() {

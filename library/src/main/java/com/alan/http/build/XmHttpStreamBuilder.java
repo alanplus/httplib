@@ -3,6 +3,7 @@ package com.alan.http.build;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.alan.http.ApiResult;
 import com.alan.http.XmHttpConfig;
 import com.alan.http.request.BitmapRequest;
 
@@ -17,19 +18,22 @@ import okhttp3.Response;
  * 时 间：2019-12-17
  * 简 述：<功能简述>
  */
-public class XmHttpStreamBuilder extends XmHttpBuilder<Bitmap> {
+public class XmHttpStreamBuilder extends XmHttpBuilder {
     public XmHttpStreamBuilder(BitmapRequest baseRequest) {
         super(baseRequest);
     }
 
     @Override
-    public Bitmap build() {
+    public ApiResult build() {
         complete();
         BitmapRequest bitmapRequest = getBitmapRequest();
+        ApiResult apiResult = new ApiResult(-1);
         try {
             Response response = bitmapRequest.response();
             if (response.isSuccessful()) {
-                return BitmapFactory.decodeStream(response.body().byteStream());
+                apiResult.code = 200;
+                apiResult.object = BitmapFactory.decodeStream(response.body().byteStream());
+                return apiResult;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,12 +72,14 @@ public class XmHttpStreamBuilder extends XmHttpBuilder<Bitmap> {
         }
     };
 
-    void handlerSuccess(Call call, final Bitmap bitmap) {
+    private void handlerSuccess(Call call, final Bitmap bitmap) {
         if (null != onHttpCallBack) {
             XmHttpConfig.getInstance().getHandler().post(new Runnable() {
                 @Override
                 public void run() {
-                    onHttpCallBack.onSuccess("", bitmap);
+                    ApiResult apiResult = new ApiResult(200);
+                    apiResult.object = bitmap;
+                    onHttpCallBack.onSuccess("", apiResult);
                 }
             });
         }

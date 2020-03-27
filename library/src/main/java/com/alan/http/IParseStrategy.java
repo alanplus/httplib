@@ -5,7 +5,7 @@ package com.alan.http;
  * 时 间：2019-12-16
  * 简 述：<功能简述>
  */
-public interface IParseStrategy<T> {
+public interface IParseStrategy {
 
-    T parse(String string);
+    ApiResult parse(String string);
 }

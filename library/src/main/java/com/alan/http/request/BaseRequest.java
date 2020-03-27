@@ -2,6 +2,7 @@ package com.alan.http.request;
 
 import android.text.TextUtils;
 
+import com.alan.http.ApiResult;
 import com.alan.http.XmHttpConfig;
 
 import java.io.File;
@@ -137,15 +138,15 @@ public abstract class BaseRequest {
         okHttpClient.newCall(request).enqueue(callback);
     }
 
-    public interface OnHttpCallBack<T> {
+    public interface OnHttpCallBack {
 
-        void onSuccess(String content, T t);
+        void onSuccess(String content, ApiResult t);
 
         void onFailure(Call call, Exception e);
 
     }
 
-    public interface OnFileHttpCallBack extends OnHttpCallBack<File> {
+    public interface OnFileHttpCallBack extends OnHttpCallBack {
 
         void onProgressCallback(long progress, long len);
 

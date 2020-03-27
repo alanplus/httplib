@@ -3,6 +3,7 @@ package com.alan.http.build;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import com.alan.http.ApiResult;
 import com.alan.http.XmHttpConfig;
 import com.alan.http.request.BaseRequest;
 import com.alan.http.request.FileRequest;
@@ -21,7 +22,7 @@ import okhttp3.Response;
  * 时 间：2019-12-25
  * 简 述：<功能简述>
  */
-public class XmFileHttpBuilder extends XmHttpBuilder<File> {
+public class XmFileHttpBuilder extends XmHttpBuilder {
 
     private String targetFile;
     private BaseRequest.OnFileHttpCallBack onFileHttpCallBack;
@@ -33,28 +34,29 @@ public class XmFileHttpBuilder extends XmHttpBuilder<File> {
     }
 
     @Override
-    public File build() {
-        File file = haveFile();
-        if (file != null) {
-            return file;
-        }
-
-        if (TextUtils.isEmpty(targetFile)) {
-            return null;
-        }
-
-        complete();
-        Response response = null;
-        try {
-            response = getFileRequest().response();
-        } catch (Exception ignore) {
-
-        }
-
-        if (null == response) {
-            return null;
-        }
-        return generateFile(response);
+    public ApiResult build() {
+//        File file = haveFile();
+//        if (file != null) {
+//            return file;
+//        }
+//
+//        if (TextUtils.isEmpty(targetFile)) {
+//            return null;
+//        }
+//
+//        complete();
+//        Response response = null;
+//        try {
+//            response = getFileRequest().response();
+//        } catch (Exception ignore) {
+//
+//        }
+//
+//        if (null == response) {
+//            return null;
+//        }
+//        return generateFile(response);
+        return null;
     }
 
     private File generateFile(Response response) {
@@ -73,27 +75,27 @@ public class XmFileHttpBuilder extends XmHttpBuilder<File> {
     @Override
     public void buildOnThread() {
 
-        File file = haveFile();
-        if (file != null) {
-            if (null != onFileHttpCallBack) {
-                onFileHttpCallBack.onSuccess("", file);
-            }
-            return;
-        }
-
-        if (TextUtils.isEmpty(targetFile)) {
-            if (null != onFileHttpCallBack) {
-                onFileHttpCallBack.onFailure(null, new Exception("目标文件为空"));
-            }
-            return;
-        }
-
-        complete();
-        try {
-            baseRequest.executeWithThread(callback);
-        } catch (Exception e) {
-            handlerFailure(null, e);
-        }
+//        File file = haveFile();
+//        if (file != null) {
+//            if (null != onFileHttpCallBack) {
+//                onFileHttpCallBack.onSuccess("", null);
+//            }
+//            return;
+//        }
+//
+//        if (TextUtils.isEmpty(targetFile)) {
+//            if (null != onFileHttpCallBack) {
+//                onFileHttpCallBack.onFailure(null, new Exception("目标文件为空"));
+//            }
+//            return;
+//        }
+//
+//        complete();
+//        try {
+//            baseRequest.executeWithThread(callback);
+//        } catch (Exception e) {
+//            handlerFailure(null, e);
+//        }
     }
 
     Callback callback = new Callback() {
@@ -119,12 +121,12 @@ public class XmFileHttpBuilder extends XmHttpBuilder<File> {
         }
     };
 
-    void handlerSuccess(Call call, final File file) {
+    private void handlerSuccess(Call call, final File file) {
         if (null != onFileHttpCallBack) {
             XmHttpConfig.getInstance().getHandler().post(new Runnable() {
                 @Override
                 public void run() {
-                    onFileHttpCallBack.onSuccess("", file);
+//                    onFileHttpCallBack.onSuccess("", file);
                 }
             });
         }
