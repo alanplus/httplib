@@ -2,6 +2,8 @@ package com.alan.http.build;
 
 import android.text.TextUtils;
 
+import com.alan.http.HttpConfig;
+import com.alan.http.IHttpConfig;
 import com.alan.http.IParseStrategy;
 import com.alan.http.XmHttpConfig;
 import com.alan.http.request.BaseRequest;
@@ -21,27 +23,40 @@ import okhttp3.Response;
  */
 public class XmHttpBuilder<T> {
 
-    boolean isEncoding;
     BaseRequest baseRequest;
 
     HashMap<String, String> mParams;
     HashMap<String, String> mHeaders;
+
+    boolean isEncoding;
+    boolean isLog;
+
+    IParseStrategy<T> iParseStrategy;
+
     String tag;
     MediaType mediaType;
 
-    IParseStrategy<T> iParseStrategy;
+
     BaseRequest.OnHttpCallBack<T> onHttpCallBack;
 
 
     public XmHttpBuilder(BaseRequest baseRequest) {
         this.baseRequest = baseRequest;
+        setHttpConfig(HttpConfig.iHttpConfig);
+        this.tag = baseRequest.getUrl();
+    }
+
+    public XmHttpBuilder<T> setHttpConfig(IHttpConfig iHttpConfig) {
         mParams = new HashMap<>();
         mHeaders = new HashMap<>();
-        mParams.putAll(XmHttpConfig.getInstance().getHttpParamMap());
-        mHeaders.putAll(XmHttpConfig.getInstance().getHttpHeadMap());
-        isEncoding = XmHttpConfig.getInstance().isEncoding();
-        this.tag = baseRequest.getUrl();
-
+        if (null != iHttpConfig) {
+            mParams.putAll(iHttpConfig.getCommonParams());
+            mHeaders.putAll(iHttpConfig.getHeadParams());
+        }
+        isEncoding = null == iHttpConfig || iHttpConfig.isEncoding();
+        isLog = null == iHttpConfig || iHttpConfig.isPrintLog();
+        mediaType = null == iHttpConfig ? XmHttpConfig.MEDIA_TYPE_JSON : iHttpConfig.getMediaType();
+        return this;
     }
 
 
@@ -108,7 +123,7 @@ public class XmHttpBuilder<T> {
         return this;
     }
 
-     void complete() {
+    void complete() {
         baseRequest.setEncoding(isEncoding);
         baseRequest.setHeaders(mHeaders);
         baseRequest.setMediaType(mediaType);
