@@ -1,5 +1,6 @@
 package com.alan.http.request;
 
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.alan.http.ApiResult;
@@ -181,22 +182,27 @@ public abstract class XmRequest {
     }
 
 
-    public void execute(OnHttpCallBack callBack) throws Exception {
+    public void execute(OnHttpCallBack callBack) {
         this.onHttpCallBack = callBack;
-        Request request = create();
+        Request request = null;
+        try {
+            request = create();
+        } catch (Exception e) {
+            LogUtil.error(e);
+            onError(onHttpCallBack, null, e);
+            return;
+        }
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                if (null != onHttpCallBack) {
-                    onHttpCallBack.onFailure(call, e);
-                }
+                onError(onHttpCallBack, call, e);
             }
 
             @Override
-            public void onResponse(final Call call, final Response response) throws IOException {
-
-                if (null != onHttpCallBack) {
-                    HttpConfig.handler().post(new Runnable() {
+            public void onResponse(final Call call, final Response response){
+                Handler handler = HttpConfig.handler();
+                if (null != onHttpCallBack && handler != null) {
+                    handler.post(new Runnable() {
                         @Override
                         public void run() {
                             try {
@@ -212,6 +218,19 @@ public abstract class XmRequest {
             }
         });
     }
+
+    private void onError(final OnHttpCallBack onHttpCallBack, final Call call, final Exception e) {
+        Handler handler = HttpConfig.handler();
+        if (null != onHttpCallBack && handler != null) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    onHttpCallBack.onFailure(call, e);
+                }
+            });
+        }
+    }
+
 
     private ApiResult handlerResponse(Response response) throws IOException {
         ApiResult apiResult = new ApiResult(-122);
