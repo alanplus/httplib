@@ -153,7 +153,7 @@ public class XmHttpBuilder<T> {
         }
     }
 
-    Callback callback = new Callback() {
+    private Callback callback = new Callback() {
         @Override
         public void onFailure(Call call, IOException e) {
             handlerFailure(call, e);
@@ -171,7 +171,7 @@ public class XmHttpBuilder<T> {
         }
     };
 
-    void handlerSuccess(final Call call, final String string) {
+    private void handlerSuccess(final Call call, final String string) {
         T t = null;
         if (null != iParseStrategy) {
             t = iParseStrategy.parse(string);
