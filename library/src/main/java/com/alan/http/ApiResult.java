@@ -14,6 +14,7 @@ import java.util.HashMap;
  */
 public class ApiResult implements Serializable {
 
+    // -121 代码错误 -122 http 返回错误
     public int code;
     public String msg;
     public String url;
@@ -24,6 +25,9 @@ public class ApiResult implements Serializable {
     public int type;
 
     public JSONObject jsonObject;
+
+    public int httpCode;
+    public String originText;
 
     public ApiResult() {
     }
@@ -43,7 +47,6 @@ public class ApiResult implements Serializable {
     public ApiResult(int code, String msg, String url, Object object) {
         this(code, msg, url, object, null);
     }
-
 
 
     public ApiResult(int code, String msg, String url, Object object, HashMap<String, Object> map) {

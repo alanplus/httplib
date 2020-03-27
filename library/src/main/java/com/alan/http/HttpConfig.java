@@ -48,19 +48,23 @@ public class HttpConfig {
     }
 
     public static MediaType getMediaType() {
-        return null == iHttpConfig ? MEDIA_TYPE_JSON : iHttpConfig.getMediaType();
+        return null == iHttpConfig || iHttpConfig.getMediaType() == null ? MEDIA_TYPE_JSON : iHttpConfig.getMediaType();
     }
 
     public static HashMap<String, String> getCommonParams() {
-        return null == iHttpConfig ? new HashMap<String, String>() : iHttpConfig.getCommonParams();
+        return null == iHttpConfig || null == iHttpConfig.getCommonParams() ? new HashMap<String, String>() : iHttpConfig.getCommonParams();
     }
 
     public static HashMap<String, String> getHeadParams() {
-        return null == iHttpConfig ? new HashMap<String, String>() : iHttpConfig.getHeadParams();
+        return null == iHttpConfig || null == iHttpConfig.getHeadParams() ? new HashMap<String, String>() : iHttpConfig.getHeadParams();
     }
 
     public static Handler handler() {
         return null == iHttpConfig ? null : iHttpConfig.handler();
+    }
+
+    public static IParseStrategy getParseStrategy() {
+        return null == iHttpConfig ? null : iHttpConfig.getParseStrategy();
     }
 
 }

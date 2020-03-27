@@ -4,12 +4,16 @@ import android.text.TextUtils;
 
 import com.alan.http.ApiResult;
 import com.alan.http.HttpConfig;
+import com.alan.http.IParseStrategy;
+import com.alan.http.LogUtil;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -38,6 +42,10 @@ public abstract class XmRequest {
     protected HashMap<String, String> mParams;
     protected HashMap<String, String> mHeaders;
 
+    protected IParseStrategy iParseStrategy;
+
+    protected OnHttpCallBack onHttpCallBack;
+
 
     XmRequest(String path) {
         this.okHttpClient = HttpConfig.getOkHttpClient();
@@ -48,6 +56,7 @@ public abstract class XmRequest {
         this.mediaType = HttpConfig.getMediaType();
         this.mParams = HttpConfig.getCommonParams();
         this.mHeaders = HttpConfig.getHeadParams();
+        this.iParseStrategy = HttpConfig.getParseStrategy();
     }
 
 
@@ -126,37 +135,45 @@ public abstract class XmRequest {
     }
 
 
-    public XmRequest addParams(HashMap<String, String> mParams){
+    public XmRequest addParams(HashMap<String, String> mParams) {
         this.mParams.putAll(mParams);
         return this;
     }
 
-    public XmRequest addParam(String key,String value){
-        this.mParams.put(key,value);
+    public XmRequest addParam(String key, String value) {
+        this.mParams.put(key, value);
         return this;
     }
 
-    public XmRequest addHeads(HashMap<String, String> mHeaders){
+    public XmRequest addHeads(HashMap<String, String> mHeaders) {
         this.mHeaders.putAll(mHeaders);
         return this;
     }
 
-    public XmRequest addHead(String key,String value){
-        this.mHeaders.put(key,value);
+    public XmRequest addHead(String key, String value) {
+        this.mHeaders.put(key, value);
+        return this;
+    }
+
+    public XmRequest setParseStrategy(IParseStrategy iParseStrategy) {
+        this.iParseStrategy = iParseStrategy;
+        return this;
+    }
+
+    public XmRequest setOnHttpCallBack(OnHttpCallBack onHttpCallBack) {
+        this.onHttpCallBack = onHttpCallBack;
         return this;
     }
 
     /**
      * 执行请求
      */
-    public String execute() throws Exception {
+    public ApiResult execute() throws Exception {
         Request request = create();
         Response response = okHttpClient.newCall(request).execute();
-        if (response.isSuccessful()) {
-            return response.body() == null ? "" : response.body().string();
-        }
-        return "";
+        return handlerResponse(response);
     }
+
 
     public Response response() throws Exception {
         Request request = create();
@@ -164,9 +181,48 @@ public abstract class XmRequest {
     }
 
 
-    public void executeWithThread(Callback callback) throws Exception {
+    public void execute(OnHttpCallBack callBack) throws Exception {
+        this.onHttpCallBack = callBack;
         Request request = create();
-        okHttpClient.newCall(request).enqueue(callback);
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (null != onHttpCallBack) {
+                    onHttpCallBack.onFailure(call, e);
+                }
+            }
+
+            @Override
+            public void onResponse(final Call call, final Response response) throws IOException {
+
+                if (null != onHttpCallBack) {
+                    HttpConfig.handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                ApiResult apiResult = handlerResponse(response);
+                                onHttpCallBack.onSuccess(apiResult.originText, apiResult);
+                            } catch (IOException e) {
+                                LogUtil.error(e);
+                                onHttpCallBack.onFailure(call, e);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private ApiResult handlerResponse(Response response) throws IOException {
+        ApiResult apiResult = new ApiResult(-122);
+        apiResult.httpCode = response.code();
+        if (response.isSuccessful()) {
+            String s = response.body() == null ? "" : response.body().string();
+            apiResult.code = -121;
+            apiResult.originText = s;
+            return null == iParseStrategy ? apiResult : iParseStrategy.parse(s);
+        }
+        return apiResult;
     }
 
     public interface OnHttpCallBack {
