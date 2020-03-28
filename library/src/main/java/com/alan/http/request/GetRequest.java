@@ -3,6 +3,8 @@ package com.alan.http.request;
 
 import android.text.TextUtils;
 
+import com.alan.http.LogUtil;
+
 import okhttp3.Request;
 
 /**
@@ -19,9 +21,10 @@ public class GetRequest extends XmRequest {
 
     @Override
     protected Request create(String url, Request.Builder builder, String body) {
-        if(!TextUtils.isEmpty(body)){
+        if (!TextUtils.isEmpty(body)) {
             url += "?" + body;
         }
+        LogUtil.d(url);
         return builder.url(url).build();
     }
 
