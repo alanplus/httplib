@@ -224,7 +224,7 @@ public abstract class XmRequest {
         });
     }
 
-    private void onError(final OnHttpCallBack onHttpCallBack, final Call call, final Exception e) {
+    protected void onError(final OnHttpCallBack onHttpCallBack, final Call call, final Exception e) {
         Handler handler = HttpConfig.handler();
         if (null != onHttpCallBack && handler != null) {
             handler.post(new Runnable() {
@@ -237,7 +237,7 @@ public abstract class XmRequest {
     }
 
 
-    private ApiResult handlerResponse(Response response) throws IOException {
+    protected ApiResult handlerResponse(Response response) throws IOException {
         ApiResult apiResult = new ApiResult(-122);
         apiResult.httpCode = response.code();
         if (response.isSuccessful()) {
