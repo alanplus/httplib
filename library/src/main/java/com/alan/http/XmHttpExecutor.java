@@ -2,7 +2,9 @@ package com.alan.http;
 
 
 import com.alan.http.request.BitmapRequest;
+import com.alan.http.request.FileRequest;
 import com.alan.http.request.GetRequest;
+import com.alan.http.request.PostFileRequest;
 import com.alan.http.request.PostRequest;
 import com.alan.http.request.XmRequest;
 
@@ -19,7 +21,7 @@ public class XmHttpExecutor {
         return new GetRequest(path);
     }
 
-    public static  XmRequest post(String path) {
+    public static XmRequest post(String path) {
         return new PostRequest(path);
     }
 
@@ -27,7 +29,11 @@ public class XmHttpExecutor {
         return new BitmapRequest(path);
     }
 
-//    public static XmFileHttpBuilder file(String path) {
-//        return new XmFileHttpBuilder(new FileRequest(path));
-//    }
+    public static XmRequest postFile(String path) {
+        return new PostFileRequest(path);
+    }
+
+    public static XmRequest downloadFile(String path) {
+        return new FileRequest(path);
+    }
 }
