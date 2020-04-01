@@ -29,7 +29,7 @@ public class PostFileRequest extends XmRequest {
     }
 
     @Override
-    protected Request create(String url, Request.Builder builder, String str) {
+    public Request create(String url, Request.Builder builder, String str) {
         builder.url(url);
         MultipartBody.Builder body = new MultipartBody.Builder();
         body.setType(MultipartBody.FORM);

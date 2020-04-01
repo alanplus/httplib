@@ -20,7 +20,7 @@ public class GetRequest extends XmRequest {
     }
 
     @Override
-    protected Request create(String url, Request.Builder builder, String body) {
+    public Request create(String url, Request.Builder builder, String body) {
         if (!TextUtils.isEmpty(body)) {
             url += "?" + body;
         }

@@ -17,7 +17,7 @@ public class PostRequest extends XmRequest {
     }
 
     @Override
-    protected Request create(String url, Request.Builder builder, String body) {
+    public Request create(String url, Request.Builder builder, String body) {
         LogUtil.d(url);
         LogUtil.d(body);
         return builder.url(url).post(RequestBody.create(mediaType, body)).build();
