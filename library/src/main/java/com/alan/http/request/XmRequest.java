@@ -61,7 +61,7 @@ public abstract class XmRequest {
     }
 
 
-    abstract Request create(String url, Request.Builder builder, String body);
+    public abstract Request create(String url, Request.Builder builder, String body);
 
 
     private String getContentFromMap(Map<String, String> params) throws UnsupportedEncodingException {
