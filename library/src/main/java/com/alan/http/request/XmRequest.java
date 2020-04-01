@@ -48,7 +48,7 @@ public abstract class XmRequest {
     protected OnHttpCallBack onHttpCallBack;
 
 
-    XmRequest(String path) {
+    public XmRequest(String path) {
         this.okHttpClient = HttpConfig.getOkHttpClient();
         this.url = path.startsWith("http://") || path.startsWith("https://") ? path : HttpConfig.getHost() + path;
         this.tag = url;
