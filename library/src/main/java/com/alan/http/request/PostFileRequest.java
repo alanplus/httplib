@@ -45,16 +45,12 @@ public class PostFileRequest extends XmRequest {
                     continue;
                 }
                 String value = mParams.get(key);
-                File file = new File(value);
-                if (file.exists() && file.isFile()) {
-                    // 如果这是一个文件
-                    body.addFormDataPart(key, file.getName(), new UpdateRequestBody(file, mediaType));
-                } else {
-                    // 如果这是一个参数
-                    if (!TextUtils.isEmpty(value)) {
-                        body.addFormDataPart(key, value);
-                    }
+                if ("file".equals(key)) {
+                    File file = new File(value);
+                    body.addFormDataPart(key, file.getName(), RequestBody.create(mediaType, file));
+                    continue;
                 }
+                body.addFormDataPart(key, TextUtils.isEmpty(value) ? "" : value);
             }
         }
         return builder.post(body.build()).build();
