@@ -33,17 +33,22 @@ public class PostFileRequest extends XmRequest {
         builder.url(url);
         MultipartBody.Builder body = new MultipartBody.Builder();
         body.setType(MultipartBody.FORM);
+
+
         // 添加参数
         if (!mParams.isEmpty()) {
+            String type = mParams.get("media_type");
+            MediaType mediaType = TextUtils.isEmpty("type") ? MediaType.parse("application/octet-stream") : MediaType.parse(type);
+
             for (String key : mParams.keySet()) {
                 String value = mParams.get(key);
                 File file = new File(value);
                 if (file.exists() && file.isFile()) {
                     // 如果这是一个文件
-                    body.addFormDataPart(key, file.getName(), new UpdateRequestBody(file));
+                    body.addFormDataPart(key, file.getName(), new UpdateRequestBody(file, mediaType));
                 } else {
                     // 如果这是一个参数
-                    if(!TextUtils.isEmpty(value)){
+                    if (!TextUtils.isEmpty(value)) {
                         body.addFormDataPart(key, value);
                     }
                 }
@@ -55,14 +60,16 @@ public class PostFileRequest extends XmRequest {
     private class UpdateRequestBody extends RequestBody {
 
         private File mFile;
+        private MediaType mediaType;
 
-        private UpdateRequestBody(File file) {
+        private UpdateRequestBody(File file, MediaType mediaType) {
             mFile = file;
+            this.mediaType = mediaType;
         }
 
         @Override
         public MediaType contentType() {
-            return MediaType.parse("application/octet-stream");
+            return mediaType;
         }
 
         @Override
