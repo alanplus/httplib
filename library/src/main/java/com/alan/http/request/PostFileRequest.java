@@ -41,6 +41,9 @@ public class PostFileRequest extends XmRequest {
             MediaType mediaType = TextUtils.isEmpty("type") ? MediaType.parse("application/octet-stream") : MediaType.parse(type);
 
             for (String key : mParams.keySet()) {
+                if ("media_type".equals(key)) {
+                    continue;
+                }
                 String value = mParams.get(key);
                 File file = new File(value);
                 if (file.exists() && file.isFile()) {
