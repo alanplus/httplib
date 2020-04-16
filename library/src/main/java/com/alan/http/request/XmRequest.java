@@ -169,7 +169,7 @@ public abstract class XmRequest {
     /**
      * 执行请求
      */
-    public ApiResult execute(){
+    public ApiResult execute() {
         try {
             Request request = create();
             Response response = okHttpClient.newCall(request).execute();
@@ -206,20 +206,21 @@ public abstract class XmRequest {
             @Override
             public void onResponse(final Call call, final Response response) {
                 Handler handler = HttpConfig.handler();
-                if (null != onHttpCallBack && handler != null) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                ApiResult apiResult = handlerResponse(response);
+                if (null != onHttpCallBack && handler != null)
+                    try {
+                        final ApiResult apiResult = handlerResponse(response);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
                                 onHttpCallBack.onSuccess(apiResult.originText, apiResult);
-                            } catch (IOException e) {
-                                LogUtil.error(e);
-                                onHttpCallBack.onFailure(call, e);
+
                             }
-                        }
-                    });
-                }
+                        });
+                    } catch (IOException e) {
+                        LogUtil.error(e);
+                        onError(onHttpCallBack, null, e);
+                    }
+
             }
         });
     }
