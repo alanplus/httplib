@@ -47,6 +47,8 @@ public abstract class XmRequest {
 
     protected OnHttpCallBack onHttpCallBack;
 
+    protected String downloadDir, downloadName;
+
 
     public XmRequest(String path) {
         this.okHttpClient = HttpConfig.getOkHttpClient();
@@ -166,6 +168,12 @@ public abstract class XmRequest {
         return this;
     }
 
+    public XmRequest setDownloadDir(String dir, String downloadName) {
+        this.downloadDir = dir;
+        this.downloadName = downloadName;
+        return this;
+    }
+
     /**
      * 执行请求
      */
@@ -173,7 +181,7 @@ public abstract class XmRequest {
         try {
             Request request = create();
             Response response = okHttpClient.newCall(request).execute();
-            return handlerResponse(response);
+            return handlerResponse(response, null);
         } catch (Exception e) {
             LogUtil.error(e);
         }
@@ -187,7 +195,7 @@ public abstract class XmRequest {
     }
 
 
-    public void execute(OnHttpCallBack callBack) {
+    public void execute(final OnHttpCallBack callBack) {
         this.onHttpCallBack = callBack;
         Request request = null;
         try {
@@ -208,7 +216,7 @@ public abstract class XmRequest {
                 Handler handler = HttpConfig.handler();
                 if (null != onHttpCallBack && handler != null)
                     try {
-                        final ApiResult apiResult = handlerResponse(response);
+                        final ApiResult apiResult = handlerResponse(response, callBack);
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -238,7 +246,7 @@ public abstract class XmRequest {
     }
 
 
-    protected ApiResult handlerResponse(Response response) throws IOException {
+    protected ApiResult handlerResponse(Response response, OnHttpCallBack onHttpCallBack) throws IOException {
         ApiResult apiResult = new ApiResult(-122);
         apiResult.httpCode = response.code();
         if (response.isSuccessful()) {
@@ -258,10 +266,10 @@ public abstract class XmRequest {
 
     }
 
-    public interface OnFileHttpCallBack extends OnHttpCallBack {
+    public interface OnDownloadHttpCallBack extends OnHttpCallBack {
 
-        void onProgressCallback(long progress, long len);
-
+        void onProgressCallback(long progress, long total);
     }
+
 
 }

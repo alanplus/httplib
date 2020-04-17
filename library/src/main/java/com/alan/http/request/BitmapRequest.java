@@ -35,7 +35,7 @@ public class BitmapRequest extends XmRequest {
 
 
     @Override
-    protected ApiResult handlerResponse(Response response){
+    protected ApiResult handlerResponse(Response response, OnHttpCallBack onHttpCallBack) {
         ApiResult apiResult = new ApiResult(-122);
         apiResult.httpCode = response.code();
         if (response.isSuccessful()) {

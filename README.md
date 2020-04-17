@@ -13,7 +13,7 @@ allprojects {
 
 ```
 dependencies {
-    implementation 'com.github.alanplus:httplib:1.0'
+    implementation 'com.github.alanplus:httplib:1.2.13'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.squareup.okio:okio:1.14.0'
 }
@@ -22,7 +22,9 @@ dependencies {
 - 注册 网络请求配置
 
 ```java
- HttpConfig.regist(MyHttpConfig.getInstance());
+
+ //HttpConfig.regist(MyHttpConfig.getInstance());
+
 ```
 
 ```java

@@ -1,5 +1,6 @@
 package com.alan.http;
 
+import android.content.Context;
 import android.os.Handler;
 
 import java.util.HashMap;
@@ -31,5 +32,7 @@ public interface IHttpConfig {
     String host();
 
     Handler handler();
+
+    Context getContent();
 
 }

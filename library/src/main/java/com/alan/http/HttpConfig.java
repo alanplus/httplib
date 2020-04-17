@@ -1,5 +1,6 @@
 package com.alan.http;
 
+import android.content.Context;
 import android.os.Handler;
 
 import java.util.HashMap;
@@ -65,6 +66,10 @@ public class HttpConfig {
 
     public static IParseStrategy getParseStrategy() {
         return null == iHttpConfig ? null : iHttpConfig.getParseStrategy();
+    }
+
+    public static Context getContext() {
+        return iHttpConfig.getContent();
     }
 
 }
