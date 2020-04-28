@@ -14,7 +14,6 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -66,7 +65,7 @@ public abstract class XmRequest {
     public abstract Request create(String url, Request.Builder builder, String body);
 
 
-    private String getContentFromMap(Map<String, String> params) throws UnsupportedEncodingException {
+    protected String getContentFromMap(Map<String, String> params) throws UnsupportedEncodingException {
         if (null == params) {
             return "";
         }
@@ -84,14 +83,14 @@ public abstract class XmRequest {
         return sb.toString();
     }
 
-    private Request create() throws IOException {
+    protected Request create() throws IOException {
         Request.Builder builder = new Request.Builder().tag(tag);
         addHeaders(builder);
         return create(url, builder, getContentFromMap(mParams));
     }
 
 
-    private void addHeaders(Request.Builder builder) {
+    protected void addHeaders(Request.Builder builder) {
         if (!mHeaders.isEmpty()) {
             for (String key : mHeaders.keySet()) {
                 String value = mHeaders.get(key);
