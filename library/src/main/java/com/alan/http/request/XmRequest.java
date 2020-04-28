@@ -147,6 +147,27 @@ public abstract class XmRequest {
         return this;
     }
 
+    public XmRequest addParam(String key, int value) {
+        this.mParams.put(key, String.valueOf(value));
+        return this;
+    }
+
+
+    public XmRequest addParam(String key, boolean value) {
+        this.mParams.put(key, String.valueOf(value));
+        return this;
+    }
+
+    public XmRequest addParam(String key, long value) {
+        this.mParams.put(key, String.valueOf(value));
+        return this;
+    }
+
+    public XmRequest addParam(String key, Object value) {
+        this.mParams.put(key, value.toString());
+        return this;
+    }
+
     public XmRequest addHeads(HashMap<String, String> mHeaders) {
         this.mHeaders.putAll(mHeaders);
         return this;
