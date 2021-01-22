@@ -12,6 +12,7 @@ import com.alan.http.OnHttpExceptionListener;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -203,7 +204,8 @@ public abstract class XmRequest {
         try {
             Request request = create();
             Response response = okHttpClient.newCall(request).execute();
-            return handlerResponse(response, null);
+            throw new SocketException("connection reset");
+//            return handlerResponse(response, null);
         } catch (Exception e) {
             handlerException(e);
             LogUtil.error(e);
@@ -240,14 +242,15 @@ public abstract class XmRequest {
                 Handler handler = HttpConfig.handler();
                 if (null != onHttpCallBack && handler != null) {
                     try {
-                        final ApiResult apiResult = handlerResponse(response, callBack);
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                onHttpCallBack.onSuccess(apiResult.originText, apiResult);
-
-                            }
-                        });
+                        throw new SocketException("connection reset");
+//                        final ApiResult apiResult = handlerResponse(response, callBack);
+//                        handler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                onHttpCallBack.onSuccess(apiResult.originText, apiResult);
+//
+//                            }
+//                        });
                     } catch (IOException e) {
                         handlerException(e);
                         LogUtil.error(e);
