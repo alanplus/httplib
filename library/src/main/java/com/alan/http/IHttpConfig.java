@@ -35,4 +35,6 @@ public interface IHttpConfig {
 
     Context getContent();
 
+    OnHttpExceptionListener getOnHttpExceptionListener();
+
 }

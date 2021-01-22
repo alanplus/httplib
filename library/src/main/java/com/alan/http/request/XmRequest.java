@@ -5,8 +5,10 @@ import android.text.TextUtils;
 
 import com.alan.http.ApiResult;
 import com.alan.http.HttpConfig;
+import com.alan.http.IHttpConfig;
 import com.alan.http.IParseStrategy;
 import com.alan.http.LogUtil;
+import com.alan.http.OnHttpExceptionListener;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -203,6 +205,7 @@ public abstract class XmRequest {
             Response response = okHttpClient.newCall(request).execute();
             return handlerResponse(response, null);
         } catch (Exception e) {
+            handlerException(e);
             LogUtil.error(e);
         }
         return new ApiResult(-122);
@@ -221,6 +224,7 @@ public abstract class XmRequest {
         try {
             request = create();
         } catch (Exception e) {
+            handlerException(e);
             LogUtil.error(e);
             onError(onHttpCallBack, null, e);
             return;
@@ -234,7 +238,7 @@ public abstract class XmRequest {
             @Override
             public void onResponse(final Call call, final Response response) {
                 Handler handler = HttpConfig.handler();
-                if (null != onHttpCallBack && handler != null)
+                if (null != onHttpCallBack && handler != null) {
                     try {
                         final ApiResult apiResult = handlerResponse(response, callBack);
                         handler.post(new Runnable() {
@@ -245,16 +249,18 @@ public abstract class XmRequest {
                             }
                         });
                     } catch (IOException e) {
+                        handlerException(e);
                         LogUtil.error(e);
                         onError(onHttpCallBack, null, e);
                     }
-
+                }
             }
         });
     }
 
     protected void onError(final OnHttpCallBack onHttpCallBack, final Call call, final Exception e) {
         Handler handler = HttpConfig.handler();
+        handlerException(e);
         if (null != onHttpCallBack && handler != null) {
             handler.post(new Runnable() {
                 @Override
@@ -291,5 +297,12 @@ public abstract class XmRequest {
         void onProgressCallback(long progress, long total);
     }
 
+    private void handlerException(Exception e) {
+        IHttpConfig iHttpConfig = HttpConfig.iHttpConfig;
+        if (null != iHttpConfig && iHttpConfig.getOnHttpExceptionListener() != null) {
+            OnHttpExceptionListener onHttpExceptionListener = iHttpConfig.getOnHttpExceptionListener();
+            onHttpExceptionListener.onHttpExceptionListener(e);
+        }
+    }
 
 }

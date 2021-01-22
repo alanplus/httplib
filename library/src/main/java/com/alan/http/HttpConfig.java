@@ -16,7 +16,10 @@ import okhttp3.OkHttpClient;
  */
 public class HttpConfig {
 
-    public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");//mdiatype 这个需要和服务端保持一致
+    /**
+     * mdiatype 这个需要和服务端保持一致
+     */
+    public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
     public static final MediaType MEDIA_TYPE_APPLICATION = MediaType.parse("application/x-www-form-urlencoded");
 
     public static IHttpConfig iHttpConfig;
